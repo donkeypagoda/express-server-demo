@@ -4,6 +4,7 @@ const express = require('express');
 const fs = require('fs');
 const morgan = require('morgan');
 const path = require('path');
+const bodyParse = require("body-parser");
 
 const app = express();
 const animalsPATH = path.join(__dirname, "animals.JSON");
@@ -11,6 +12,7 @@ const animalsPATH = path.join(__dirname, "animals.JSON");
 app.disable('x-powered-by');
 
 app.use(morgan("short"));
+app.use(bodyParse.json());
 
 // TODO: get all animals
 app.get("/animals", (req, res) => {
@@ -44,10 +46,30 @@ app.get("/animals/:id", (req, res) => {
 
     res.set('Content-Type', 'text/plain');
     res.send(animals[id]);
+  });
+});
+// TODO: post one animal
+app.post("/animals", (req, res) => {
+  const name = req.body.name;
+  const kind = req.body.name;
+  fs.readFile(animalsPATH, "utf8", (err, data) => {
+    if (err) {
+      console.error(err.stack);
+      res.status(500)
+      res.send(err.message);
+    }
+    const animals = JSON.parse(data);
+    animals.push[{"name": name, "kind": kind}];
+    fs.writeFile(animalsPATH, JSON.stringify(animals), "utf8", (err) => {
+      if (err) {
+        console.error(err.stack);
+        res.status(500)
+        res.send(err.message);
+      }
+
+    });
   })
 })
-// TODO: post one animal
-
 
 const port = process.env.PORT || 8000;
 
