@@ -33,7 +33,7 @@ app.get("/animals/:id", (req, res) => {
   fs.readFile(animalsPATH, "utf8", (err, data) => {
     if (err) {
       console.error(err.stack);
-      res.status(500)
+      res.status(500);
       res.send(err.message);
     }
 
@@ -51,25 +51,32 @@ app.get("/animals/:id", (req, res) => {
 // TODO: post one animal
 app.post("/animals", (req, res) => {
   const name = req.body.name;
-  const kind = req.body.name;
+  const kind = req.body.kind;
+  if (!name || !kind){
+    res.sendStatus(400);
+  }
   fs.readFile(animalsPATH, "utf8", (err, data) => {
     if (err) {
       console.error(err.stack);
-      res.status(500)
+      res.status(500);
       res.send(err.message);
     }
     const animals = JSON.parse(data);
-    animals.push[{"name": name, "kind": kind}];
-    fs.writeFile(animalsPATH, JSON.stringify(animals), "utf8", (err) => {
+    const newAnimal = {"name": name, "kind": kind};
+    animals.push(newAnimal);
+    const newAnimalJSON = JSON.stringify(animals);
+    fs.writeFile(animalsPATH, newAnimalJSON, "utf8", (err) => {
       if (err) {
         console.error(err.stack);
-        res.status(500)
+        res.status(500);
         res.send(err.message);
       }
+      res.set('Content-Type', 'text/plain');
+      res.send(newAnimal);
 
     });
-  })
-})
+  });
+});
 
 const port = process.env.PORT || 8000;
 
